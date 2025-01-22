@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class Bubble : MonoBehaviour
 {
+    public float life = 3f;
+    public float speed = 2f;
+
+    private float lifeTimer;
     private bool moving;
 
     // Start is called before the first frame update
@@ -16,5 +20,15 @@ public class Bubble : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void Shoot()
+    {
+
+    }
+
+    private void Return()
+    {
+
     }
 }
