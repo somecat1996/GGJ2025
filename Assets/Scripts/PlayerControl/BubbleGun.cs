@@ -49,10 +49,9 @@ public class BubbleGun : MonoBehaviour
 
             bubble.gameObject.SetActive(true);
         }
-        if (Input.GetKeyUp(KeyCode.Space))
+        if (Input.GetKeyUp(KeyCode.Space) && blow)
         {
             Shoot();
-            blow = false;
         }
 
         Blow();
@@ -65,13 +64,12 @@ public class BubbleGun : MonoBehaviour
         {
             blowTimer += Time.deltaTime;
             remainEnergy -= Time.deltaTime;
+            bubble.transform.localScale = new Vector3(blowTimer, blowTimer, blowTimer);
+            bubble.transform.position = transform.position + transform.up * (bubbleOffset + blowTimer / 2);
             if (remainEnergy <= 0)
             {
                 Shoot();
-                blow = false;
             }
-            bubble.transform.localScale = new Vector3(blowTimer, blowTimer, blowTimer);
-            bubble.transform.position = transform.position + transform.up * (bubbleOffset + blowTimer / 2);
 
         }
     }
@@ -83,6 +81,8 @@ public class BubbleGun : MonoBehaviour
 
     private void Shoot()
     {
+        blow = false;
+        bubble.Shoot(transform.up);
         blowTimer = 0;
     }
 }
