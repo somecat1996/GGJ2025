@@ -5,17 +5,18 @@ using UnityEngine;
 public class Bubble : MonoBehaviour
 {
     public float life = 3f;
-    public float speed = 2f;
+    public float force = 2f;
+    public float burstForce = 200f;
 
     private float lifeTimer;
     private bool moving;
-    private Vector3 direction;
     [SerializeField] private Rigidbody2D rigidbody;
+    private List<EnemyController> enemyControllers;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        enemyControllers = new List<EnemyController>();
     }
 
     // Update is called once per frame
@@ -23,7 +24,10 @@ public class Bubble : MonoBehaviour
     {
         if (moving)
         {
-            rigidbody.MovePosition(transform.position + direction * speed * Time.deltaTime);
+            foreach (EnemyController controller in enemyControllers)
+            {
+                controller.transform.position = transform.position;
+            }
             lifeTimer -= Time.deltaTime;
             if (lifeTimer <= 0)
             {
@@ -32,21 +36,47 @@ public class Bubble : MonoBehaviour
         }
     }
 
-    public void Shoot(Vector3 d)
+    public void Shoot(Vector3 direction)
     {
+        enemyControllers.Clear();
         moving = true;
-        direction = d;
         lifeTimer = life;
+        rigidbody.AddForce(direction * force / (5 * transform.localScale.x), ForceMode2D.Impulse);
     }
 
     private void ReturnToPool()
     {
+        foreach(EnemyController controller in enemyControllers)
+        {
+            controller.ReturnToPool();
+        }
         moving = false;
         ObjectPoolManager.instance.Release(gameObject);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        
+        if (collision.tag == "Player")
+        {
+            Vector3 direction = transform.position - collision.transform.position;
+            Vector3 velocity = collision.GetComponent<Rigidbody2D>().velocity;
+            float f = Vector3.Dot(direction, velocity) / direction.magnitude;
+            rigidbody.AddForce(direction.normalized * force * f / (5 * transform.localScale.x), ForceMode2D.Impulse);
+
+        }
+        else if (collision.tag == "Enemy")
+        {
+            if (transform.localScale.x < collision.transform.localScale.x)
+            {
+                Vector3 direction = collision.transform.position - transform.position;
+                collision.GetComponent<Rigidbody2D>().AddForce(direction * force, ForceMode2D.Impulse);
+                ReturnToPool();
+            }
+            else
+            {
+                collision.GetComponent<EnemyController>().SetOff();
+                enemyControllers.Add(collision.GetComponent<EnemyController>());
+            }
+        }
     }
 }

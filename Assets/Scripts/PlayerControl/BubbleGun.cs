@@ -42,14 +42,14 @@ public class BubbleGun : MonoBehaviour
         mousePosition.z = 0;
         transform.up = (mousePosition - transform.position).normalized;
 
-        if (Input.GetKeyDown(KeyCode.Space) && remainEnergy > 0)
+        if (Input.GetKeyDown(KeyCode.Mouse0) && remainEnergy > 0)
         {
             bubble = ObjectPoolManager.instance.Get(bubblePrefab).GetComponent<Bubble>();
             blow = true;
 
             bubble.gameObject.SetActive(true);
         }
-        if (Input.GetKeyUp(KeyCode.Space) && blow)
+        if (Input.GetKeyUp(KeyCode.Mouse0) && blow)
         {
             Shoot();
         }
