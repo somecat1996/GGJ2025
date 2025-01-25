@@ -29,33 +29,36 @@ public class BubbleGun : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!blow && remainEnergy < blowEnergy)
+        if (GameManager.Instance.IsRunning())
         {
-            remainEnergy += energyRecover * Time.deltaTime;
-            if (remainEnergy >= blowEnergy)
+            if (!blow && remainEnergy < blowEnergy)
             {
-                remainEnergy = blowEnergy;
+                remainEnergy += energyRecover * Time.deltaTime;
+                if (remainEnergy >= blowEnergy)
+                {
+                    remainEnergy = blowEnergy;
+                }
             }
+
+            Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mousePosition.z = 0;
+            transform.up = (mousePosition - transform.position).normalized;
+
+            if (Input.GetKeyDown(KeyCode.Mouse0) && remainEnergy > 0)
+            {
+                bubble = ObjectPoolManager.instance.Get(bubblePrefab).GetComponent<Bubble>();
+                blow = true;
+
+                bubble.gameObject.SetActive(true);
+            }
+            if (Input.GetKeyUp(KeyCode.Mouse0) && blow)
+            {
+                Shoot();
+            }
+
+            Blow();
+            UpdateUI();
         }
-
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mousePosition.z = 0;
-        transform.up = (mousePosition - transform.position).normalized;
-
-        if (Input.GetKeyDown(KeyCode.Mouse0) && remainEnergy > 0)
-        {
-            bubble = ObjectPoolManager.instance.Get(bubblePrefab).GetComponent<Bubble>();
-            blow = true;
-
-            bubble.gameObject.SetActive(true);
-        }
-        if (Input.GetKeyUp(KeyCode.Mouse0) && blow)
-        {
-            Shoot();
-        }
-
-        Blow();
-        UpdateUI();
     }
 
     private void Blow()

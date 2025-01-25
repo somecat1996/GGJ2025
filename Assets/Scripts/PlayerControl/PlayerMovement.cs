@@ -17,7 +17,10 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 moveDirection = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
-        rigidbody.AddForce(moveDirection * force);
+        if (GameManager.Instance.IsRunning())
+        {
+            Vector3 moveDirection = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
+            rigidbody.AddForce(moveDirection * force);
+        }
     }
 }

@@ -22,16 +22,19 @@ public class Bubble : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (moving)
+        if (GameManager.Instance.IsRunning())
         {
-            foreach (EnemyController controller in enemyControllers)
+            if (moving)
             {
-                controller.transform.position = transform.position;
-            }
-            lifeTimer -= Time.deltaTime;
-            if (lifeTimer <= 0)
-            {
-                ReturnToPool();
+                foreach (EnemyController controller in enemyControllers)
+                {
+                    controller.transform.position = transform.position;
+                }
+                lifeTimer -= Time.deltaTime;
+                if (lifeTimer <= 0)
+                {
+                    ReturnToPool();
+                }
             }
         }
     }

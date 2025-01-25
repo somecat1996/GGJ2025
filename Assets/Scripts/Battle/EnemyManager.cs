@@ -13,34 +13,26 @@ public class EnemyManager : MonoBehaviour
     private Transform player;
     private float timer;
     private float generateTimer;
-    private bool start;
-
-    [Button]
-    private void StartTest()
-    {
-        Initiate();
-    }
 
 
     // Start is called before the first frame update
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
-        start = false;
     }
 
-    private void Initiate()
+    public void Initiate()
     {
+        player.position = Vector3.zero;
         timer = 0;
         generateTimer = 0;
-        start = true;
         Debug.Log("Game Start!");
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (start)
+        if (GameManager.Instance.IsRunning())
         {
             timer += Time.deltaTime;
             generateTimer += Time.deltaTime;

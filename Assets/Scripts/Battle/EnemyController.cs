@@ -18,9 +18,13 @@ public class EnemyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (moving)
+
+        if (GameManager.Instance.IsRunning())
         {
-            rigidbody.AddForce(force * (target.position - transform.position).normalized);
+            if (moving)
+            {
+                rigidbody.AddForce(force * (target.position - transform.position).normalized);
+            }
         }
     }
 
@@ -45,6 +49,7 @@ public class EnemyController : MonoBehaviour
     {
         if (collision.tag == "Player" && moving)
         {
+            GameManager.Instance.Damage(1);
             ReturnToPool();
         }
     }
