@@ -9,6 +9,7 @@ public class EnemyController : MonoBehaviour
     private Transform target;
     private bool moving;
     [SerializeField] private Rigidbody2D rigidbody;
+    [SerializeField] private Collider2D collider;
     // Start is called before the first frame update
     void Start()
     {
@@ -32,11 +33,15 @@ public class EnemyController : MonoBehaviour
     {
         moving = true;
         target = t;
+
+        collider.enabled = true;
     }
 
     public void SetOff()
     {
         moving = false;
+
+        collider.enabled = false;
     }
 
     public void ReturnToPool()

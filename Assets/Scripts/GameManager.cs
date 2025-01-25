@@ -1,18 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     public EnemyManager enemyManager;
-    public int playerHealth = 5;
+    public float playerHealth = 5f;
 
     [SerializeField] private GameObject mainPanel;
     [SerializeField] private GameObject pausePanel;
     [SerializeField] private GameObject endPanel;
+    [SerializeField] private Image healthBar;
 
-    private int health;
+    private float health;
     private bool gameStart;
     private bool gamePause;
     // Start is called before the first frame update
@@ -36,9 +38,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void Damage(int damage)
+    public void Damage(float damage)
     {
         health -= damage;
+        healthBar.fillAmount = health / playerHealth;
         if (health <= 0)
         {
             GameOver();
@@ -55,6 +58,7 @@ public class GameManager : MonoBehaviour
         mainPanel.SetActive(false);
         pausePanel.SetActive(false);
         endPanel.SetActive(false);
+        healthBar.fillAmount = health / playerHealth;
     }
 
     public void GameOver()
