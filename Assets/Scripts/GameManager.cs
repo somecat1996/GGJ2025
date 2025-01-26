@@ -13,7 +13,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject pausePanel;
     [SerializeField] private GameObject endPanel;
     [SerializeField] private Image healthBar;
+    [SerializeField] private Image expBar;
 
+    private int level;
+    private float currentExp;
+    private float requiredExp;
     private float health;
     private bool gameStart;
     private bool gamePause;
@@ -50,6 +54,11 @@ public class GameManager : MonoBehaviour
 
     public void GameStart()
     {
+        level = 1;
+        UpdateExpRequirement();
+        currentExp = 0;
+        expBar.fillAmount = 0;
+
         gameStart = true;
         gamePause = false;
         enemyManager.Initiate();
@@ -106,5 +115,22 @@ public class GameManager : MonoBehaviour
     public bool IsRunning()
     {
         return gameStart && !gamePause;
+    }
+
+    private void UpdateExpRequirement()
+    {
+        requiredExp = Mathf.Pow(level, 2);
+    }
+
+    public void AddExp(float e)
+    {
+        currentExp += e;
+        if (currentExp > requiredExp)
+        {
+            currentExp -= requiredExp;
+            level += 1;
+            UpdateExpRequirement();
+        }
+        expBar.fillAmount = currentExp / requiredExp;
     }
 }

@@ -24,12 +24,12 @@ public class Bubble : MonoBehaviour
     {
         if (GameManager.Instance.IsRunning())
         {
+            foreach (EnemyController controller in enemyControllers)
+            {
+                controller.transform.position = transform.position;
+            }
             if (moving)
             {
-                foreach (EnemyController controller in enemyControllers)
-                {
-                    controller.transform.position = transform.position;
-                }
                 lifeTimer -= Time.deltaTime;
                 if (lifeTimer <= 0)
                 {
@@ -41,7 +41,6 @@ public class Bubble : MonoBehaviour
 
     public void Shoot(Vector3 direction)
     {
-        enemyControllers.Clear();
         moving = true;
         lifeTimer = life;
         rigidbody.AddForce(direction * force / (5 * transform.localScale.x), ForceMode2D.Impulse);
@@ -53,6 +52,7 @@ public class Bubble : MonoBehaviour
         {
             controller.ReturnToPool();
         }
+        enemyControllers.Clear();
         moving = false;
         ObjectPoolManager.instance.Release(gameObject);
     }
@@ -73,6 +73,7 @@ public class Bubble : MonoBehaviour
             {
                 Vector3 direction = collision.transform.position - transform.position;
                 collision.GetComponent<Rigidbody2D>().AddForce(direction * force, ForceMode2D.Impulse);
+                collision.GetComponent<EnemyController>().Damage(transform.localScale.x);
                 ReturnToPool();
             }
             else
