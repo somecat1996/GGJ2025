@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +13,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject mainPanel;
     [SerializeField] private GameObject pausePanel;
     [SerializeField] private GameObject endPanel;
+    [SerializeField] private GameObject buffPanel;
     [SerializeField] private Image healthBar;
     [SerializeField] private Image expBar;
 
@@ -21,6 +23,15 @@ public class GameManager : MonoBehaviour
     private float health;
     private bool gameStart;
     private bool gamePause;
+
+    [SerializeField] private Buff[] buffs;
+    [SerializeField] private TMP_Text[] buffText;
+    private List<Buff> buffList;
+    private float healthRegen;
+    [HideInInspector] public float movingSpeed;
+    [HideInInspector] public float chargingSpeed;
+    [HideInInspector] public float energy;
+    [HideInInspector] public float energyRegen;
     // Start is called before the first frame update
     void Start()
     {
@@ -30,6 +41,18 @@ public class GameManager : MonoBehaviour
         mainPanel.SetActive(true);
         pausePanel.SetActive(false);
         endPanel.SetActive(false);
+        buffPanel.SetActive(false);
+
+        buffList = new List<Buff>();
+    }
+
+    private void ResetBuff()
+    {
+        healthRegen = 0;
+        movingSpeed = 0;
+        chargingSpeed = 0;
+        energy = 0;
+        energyRegen = 0;
     }
 
     // Update is called once per frame
@@ -40,11 +63,17 @@ public class GameManager : MonoBehaviour
             if (!gamePause) Pause();
             else Resume();
         }
+
+        if (IsRunning())
+        {
+            if (healthRegen > 0) Damage(-healthRegen * Time.deltaTime);
+        }
     }
 
     public void Damage(float damage)
     {
         health -= damage;
+        if (health > playerHealth) health = playerHealth;
         healthBar.fillAmount = health / playerHealth;
         if (health <= 0)
         {
@@ -68,6 +97,8 @@ public class GameManager : MonoBehaviour
         pausePanel.SetActive(false);
         endPanel.SetActive(false);
         healthBar.fillAmount = health / playerHealth;
+
+        ResetBuff();
     }
 
     public void GameOver()
@@ -122,6 +153,52 @@ public class GameManager : MonoBehaviour
         requiredExp = Mathf.Pow(level, 2);
     }
 
+    private void StartSelectBuff()
+    {
+        gamePause = true;
+        buffPanel.SetActive(true);
+
+        LoadBuff();
+    }
+
+    public void EndSelectBuff(int selection)
+    {
+        gamePause = false;
+        buffPanel.SetActive(false);
+        Buff buff = buffList[selection];
+        switch (buff.type)
+        {
+            case BuffType.HealthRegen:
+                healthRegen += buff.value;
+                break;
+            case BuffType.MovingSpeed:
+                movingSpeed += buff.value;
+                break;
+            case BuffType.ChargingSpeed:
+                chargingSpeed += buff.value;
+                break;
+            case BuffType.ChargingBar:
+                energy += buff.value;
+                break;
+            case BuffType.ChargingRegen:
+                energyRegen += buff.value;
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void LoadBuff()
+    {
+        buffList.Clear();
+        for (int i = 0; i < 3; i++)
+        {
+            Buff b = buffs[Random.Range(0, buffs.Length)];
+            buffList.Add(b);
+            buffText[i].text = b.descrition;
+        }
+    }
+
     public void AddExp(float e)
     {
         currentExp += e;
@@ -130,6 +207,7 @@ public class GameManager : MonoBehaviour
             currentExp -= requiredExp;
             level += 1;
             UpdateExpRequirement();
+            StartSelectBuff();
         }
         expBar.fillAmount = currentExp / requiredExp;
     }

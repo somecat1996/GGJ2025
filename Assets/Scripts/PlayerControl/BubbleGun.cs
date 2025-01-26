@@ -8,7 +8,11 @@ public class BubbleGun : MonoBehaviour
     [SerializeField] private Image breathBar;
     [SerializeField] private GameObject bubblePrefab;
 
-    public float blowEnergy = 5.0f;
+    public float defaultEnergy = 5.0f;
+    private float MaxEnergy()
+    {
+        return defaultEnergy + GameManager.Instance.energy;
+    }
     public float bubbleOffset = 0.5f;
     public float energyRecover = 0.5f;
 
@@ -21,7 +25,7 @@ public class BubbleGun : MonoBehaviour
     {
         blow = false;
         blowTimer = 0;
-        remainEnergy = blowEnergy;
+        remainEnergy = MaxEnergy();
 
         UpdateUI();
     }
@@ -31,12 +35,12 @@ public class BubbleGun : MonoBehaviour
     {
         if (GameManager.Instance.IsRunning())
         {
-            if (!blow && remainEnergy < blowEnergy)
+            if (!blow && remainEnergy < MaxEnergy())
             {
-                remainEnergy += energyRecover * Time.deltaTime;
-                if (remainEnergy >= blowEnergy)
+                remainEnergy += (energyRecover + GameManager.Instance.energyRegen) * Time.deltaTime;
+                if (remainEnergy >= MaxEnergy())
                 {
-                    remainEnergy = blowEnergy;
+                    remainEnergy = MaxEnergy();
                 }
             }
 
@@ -65,8 +69,8 @@ public class BubbleGun : MonoBehaviour
     {
         if (blow)
         {
-            blowTimer += Time.deltaTime;
-            remainEnergy -= Time.deltaTime;
+            blowTimer += Time.deltaTime * (1 + GameManager.Instance.chargingSpeed);
+            remainEnergy -= Time.deltaTime * (1 + GameManager.Instance.chargingSpeed);
             bubble.transform.localScale = new Vector3(blowTimer, blowTimer, blowTimer);
             bubble.transform.position = transform.position + transform.up * (bubbleOffset + blowTimer / 2);
             if (remainEnergy <= 0)
@@ -79,7 +83,7 @@ public class BubbleGun : MonoBehaviour
 
     private void UpdateUI()
     {
-        breathBar.fillAmount = remainEnergy / blowEnergy;
+        breathBar.fillAmount = remainEnergy / MaxEnergy();
     }
 
     private void Shoot()

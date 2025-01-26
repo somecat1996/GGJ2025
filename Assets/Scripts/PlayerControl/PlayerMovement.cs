@@ -49,6 +49,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rigidbody.AddForce(moveDirection * force);
+        if (GameManager.Instance.IsRunning())
+            rigidbody.AddForce(moveDirection * (force + GameManager.Instance.movingSpeed));
     }
 }
