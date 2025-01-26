@@ -27,15 +27,23 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Buff[] buffs;
     [SerializeField] private TMP_Text[] buffText;
     private List<Buff> buffList;
-    private float healthRegen;
-    [HideInInspector] public float movingSpeed;
-    [HideInInspector] public float chargingSpeed;
-    [HideInInspector] public float energy;
-    [HideInInspector] public float energyRegen;
+    private float healthRegen = 0;
+    [HideInInspector] public float movingSpeed = 0;
+    [HideInInspector] public float chargingSpeed = 0;
+    [HideInInspector] public float energy = 0;
+    [HideInInspector] public float energyRegen = 0;
+
+    public AudioSource bubblePop;
+    public AudioSource blow;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        Instance = this;
         gameStart = false;
 
         mainPanel.SetActive(true);
@@ -44,6 +52,21 @@ public class GameManager : MonoBehaviour
         buffPanel.SetActive(false);
 
         buffList = new List<Buff>();
+    }
+
+    public void BubblePop()
+    {
+        bubblePop.Play();
+    }
+
+    public void StartBlow()
+    {
+        blow.Play();
+    }
+
+    public void StopBlow()
+    {
+        blow.Stop();
     }
 
     private void ResetBuff()

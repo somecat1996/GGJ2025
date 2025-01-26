@@ -25,7 +25,7 @@ public class BubbleGun : MonoBehaviour
     {
         blow = false;
         blowTimer = 0;
-        remainEnergy = MaxEnergy();
+        remainEnergy = defaultEnergy;
 
         UpdateUI();
     }
@@ -54,6 +54,8 @@ public class BubbleGun : MonoBehaviour
                 blow = true;
 
                 bubble.gameObject.SetActive(true);
+
+                GameManager.Instance.StartBlow();
             }
             if (Input.GetKeyUp(KeyCode.Mouse0) && blow)
             {
@@ -91,5 +93,6 @@ public class BubbleGun : MonoBehaviour
         blow = false;
         bubble.Shoot(transform.up);
         blowTimer = 0;
+        GameManager.Instance.StopBlow();
     }
 }

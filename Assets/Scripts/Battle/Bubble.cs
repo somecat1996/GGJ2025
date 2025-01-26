@@ -54,6 +54,8 @@ public class Bubble : MonoBehaviour
         }
         enemyControllers.Clear();
         moving = false;
+
+        GameManager.Instance.BubblePop();
         ObjectPoolManager.instance.Release(gameObject);
     }
 
