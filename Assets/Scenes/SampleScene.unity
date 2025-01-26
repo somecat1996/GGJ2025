@@ -3686,7 +3686,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 4443755770093200158, guid: 5e7660032d2ce934688a57d24c5bd4c6, type: 3}
-  enemySize: {x: 0.5, y: 1.5}
+  enemySize: {x: 1, y: 1.5}
   generateRadius: 20
   generateTime: 5
 --- !u!1 &1398185239
